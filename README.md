@@ -42,7 +42,7 @@ http://localhost:4200
 ## Ejecutar pruebas
 
 ```bash
-npm test
+![img.png](img.png)npm test
 ```
 
 ## Ejemplo mutante
