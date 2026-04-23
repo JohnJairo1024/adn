@@ -1,0 +1,40 @@
+<main class="page">
+  <section class="panel">
+    <h1>{{ titulo }}</h1>
+    <p class="descripcion">
+      Completa la matriz 6x6 usando solo letras <strong>A</strong>, <strong>T</strong>,
+      <strong>C</strong> y <strong>G</strong>.
+    </p>
+    <p class="ayuda">Se carga un ADN de ejemplo para que puedas probar y editar.</p>
+
+    <div class="grilla" aria-label="Matriz de ADN">
+      @for (fila of filas(); track $index; let indiceFila = $index) {
+        <div class="grilla__fila">
+          @for (celda of fila; track $index; let indiceColumna = $index) {
+            <input
+              class="grilla__celda"
+              [class.grilla__celda--resaltada]="esCeldaResaltada(indiceFila, indiceColumna)"
+              type="text"
+              maxlength="1"
+              [ngModel]="celda"
+              (ngModelChange)="actualizarCelda(indiceFila, indiceColumna, $event)"
+            />
+          }
+        </div>
+      }
+    </div>
+
+    <button type="button" class="boton-principal" (click)="analizarAdn()">Analizar</button>
+
+    @if (mensajeError()) {
+      <p class="mensaje mensaje--error">{{ mensajeError() }}</p>
+    }
+
+    @if (analisis(); as resultado) {
+      <section class="resultado">
+        <p class="resultado__texto">{{ resultado.esMutante ? 'Mutante' : 'No-Mutante' }}</p>
+        <p class="resultado__detalle">Coincidencias: {{ resultado.coincidenciasEncontradas }}</p>
+      </section>
+    }
+  </section>
+</main>

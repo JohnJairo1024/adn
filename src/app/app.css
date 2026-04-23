@@ -1,0 +1,128 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.panel {
+  width: min(100%, 560px);
+  background: #ffffff;
+  border: 1px solid #1f1f1f;
+  padding: 28px;
+  text-align: center;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #111111;
+}
+
+.descripcion {
+  color: #444444;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.ayuda {
+  color: #666666;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+.grilla {
+  display: grid;
+  gap: 0;
+  width: fit-content;
+  margin: 0 auto;
+  border: 1px solid #111111;
+  background: #111111;
+}
+
+.grilla__fila {
+  display: flex;
+}
+
+.grilla__celda {
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-right: 1px solid #111111;
+  border-bottom: 1px solid #111111;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  background: #ffffff;
+  color: #111111;
+}
+
+.grilla__celda:focus {
+  outline: 2px solid #111111;
+  outline-offset: -2px;
+}
+
+.grilla__celda--resaltada {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.boton-principal {
+  border: 1px solid #111111;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 18px;
+  background: #111111;
+  color: #ffffff;
+}
+
+.mensaje,
+.resultado {
+  margin-top: 18px;
+  text-align: center;
+}
+
+.mensaje--error {
+  color: #c1121f;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.resultado {
+  border-top: 1px solid #111111;
+  padding-top: 18px;
+}
+
+.resultado__texto {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.resultado__detalle {
+  margin-top: 6px;
+  color: #444444;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 520px) {
+  .panel {
+    padding: 18px;
+  }
+
+  .grilla__celda {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+  }
+}
