@@ -13,19 +13,36 @@ export class SequenceDetectorService {
   ];
 
   contarSecuenciasRepetidas(adn: string[], detenerEn = Number.MAX_SAFE_INTEGER): number {
+    return this.buscarSecuencias(adn, detenerEn, () => {});
+  }
+
+  obtenerPosicionesDeSecuencias(adn: string[], detenerEn = Number.MAX_SAFE_INTEGER): string[] {
+    const posiciones = new Set<string>();
+    this.buscarSecuencias(adn, detenerEn, (fila, columna, pasoFila, pasoColumna) =>
+      this.registrarPosiciones(posiciones, fila, columna, pasoFila, pasoColumna)
+    );
+    return [...posiciones];
+  }
+
+  private buscarSecuencias(
+    adn: string[],
+    detenerEn: number,
+    onEncontrada: (fila: number, columna: number, pasoFila: number, pasoColumna: number) => void
+  ): number {
     let coincidencias = 0;
 
-    for (let fila = 0; fila < adn.length; fila += 1) {
-      for (let columna = 0; columna < adn[fila].length; columna += 1) {
+    for (let fila = 0; fila < adn.length; fila++) {
+      for (let columna = 0; columna < adn[fila].length; columna++) {
         const baseActual = adn[fila][columna];
 
-        for (const direccion of SequenceDetectorService.DIRECCIONES) {
-          if (!this.puedeIniciarSecuencia(adn, fila, columna, direccion.pasoFila, direccion.pasoColumna)) {
+        for (const { pasoFila, pasoColumna } of SequenceDetectorService.DIRECCIONES) {
+          if (!this.puedeIniciarSecuencia(adn, fila, columna, pasoFila, pasoColumna)) {
             continue;
           }
 
-          if (this.tieneSecuenciaRepetida(adn, fila, columna, direccion.pasoFila, direccion.pasoColumna, baseActual)) {
-            coincidencias += 1;
+          if (this.tieneSecuenciaRepetida(adn, fila, columna, pasoFila, pasoColumna, baseActual)) {
+            coincidencias++;
+            onEncontrada(fila, columna, pasoFila, pasoColumna);
 
             if (coincidencias >= detenerEn) {
               return coincidencias;
@@ -38,34 +55,6 @@ export class SequenceDetectorService {
     return coincidencias;
   }
 
-  obtenerPosicionesDeSecuencias(adn: string[], detenerEn = Number.MAX_SAFE_INTEGER): string[] {
-    const posiciones = new Set<string>();
-    let coincidencias = 0;
-
-    for (let fila = 0; fila < adn.length; fila += 1) {
-      for (let columna = 0; columna < adn[fila].length; columna += 1) {
-        const baseActual = adn[fila][columna];
-
-        for (const direccion of SequenceDetectorService.DIRECCIONES) {
-          if (!this.puedeIniciarSecuencia(adn, fila, columna, direccion.pasoFila, direccion.pasoColumna)) {
-            continue;
-          }
-
-          if (this.tieneSecuenciaRepetida(adn, fila, columna, direccion.pasoFila, direccion.pasoColumna, baseActual)) {
-            coincidencias += 1;
-            this.registrarPosiciones(posiciones, fila, columna, direccion.pasoFila, direccion.pasoColumna);
-
-            if (coincidencias >= detenerEn) {
-              return [...posiciones];
-            }
-          }
-        }
-      }
-    }
-
-    return [...posiciones];
-  }
-
   private puedeIniciarSecuencia(
     adn: string[],
     fila: number,
@@ -74,8 +63,7 @@ export class SequenceDetectorService {
     pasoColumna: number
   ): boolean {
     const ultimaFila = fila + (SequenceDetectorService.LONGITUD_SECUENCIA_REQUERIDA - 1) * pasoFila;
-    const ultimaColumna =
-      columna + (SequenceDetectorService.LONGITUD_SECUENCIA_REQUERIDA - 1) * pasoColumna;
+    const ultimaColumna = columna + (SequenceDetectorService.LONGITUD_SECUENCIA_REQUERIDA - 1) * pasoColumna;
 
     if (!this.estaDentroDeLaMatriz(adn, ultimaFila, ultimaColumna)) {
       return false;
@@ -102,7 +90,7 @@ export class SequenceDetectorService {
     for (
       let desplazamiento = 1;
       desplazamiento < SequenceDetectorService.LONGITUD_SECUENCIA_REQUERIDA;
-      desplazamiento += 1
+      desplazamiento++
     ) {
       const siguienteFila = fila + desplazamiento * pasoFila;
       const siguienteColumna = columna + desplazamiento * pasoColumna;
@@ -125,16 +113,14 @@ export class SequenceDetectorService {
     for (
       let desplazamiento = 0;
       desplazamiento < SequenceDetectorService.LONGITUD_SECUENCIA_REQUERIDA;
-      desplazamiento += 1
+      desplazamiento++
     ) {
-      const siguienteFila = fila + desplazamiento * pasoFila;
-      const siguienteColumna = columna + desplazamiento * pasoColumna;
-
-      posiciones.add(`${siguienteFila}-${siguienteColumna}`);
+      posiciones.add(`${fila + desplazamiento * pasoFila}-${columna + desplazamiento * pasoColumna}`);
     }
   }
 
   private estaDentroDeLaMatriz(adn: string[], fila: number, columna: number): boolean {
-    return fila >= 0 && fila < adn.length && columna >= 0 && columna < adn.length;
+    return fila >= 0 && fila < adn.length &&
+      columna >= 0 && columna < (adn[fila]?.length ?? 0);
   }
 }

@@ -1,13 +1,13 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, inject, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import {MutantAnalysis} from './mutant/models/mutant-analysis';
-import {MutantDetectorService} from './mutant/services/mutant-detector.service';
-import {SequenceDetectorService} from './mutant/services/sequence-detector.service';
-
+import { MutantAnalysis } from './mutant/models/mutant-analysis';
+import { MutantDetectorService } from './mutant/services/mutant-detector.service';
+import { SequenceDetectorService } from './mutant/services/sequence-detector.service';
 
 const ADN_EJEMPLO = ['ATGCGA', 'CAGTGC', 'TTATGT', 'AGAAGG', 'CCCCTA', 'TCACTG'];
+const BASES_VALIDAS = ['A', 'T', 'C', 'G'];
 
 @Component({
   selector: 'app-root',
@@ -46,23 +46,18 @@ export class App {
 
   protected actualizarCelda(fila: number, columna: number, valor: string): void {
     const valorNormalizado = valor.toUpperCase().slice(-1);
-    const nuevaGrilla = this.grillaAdn().map((filaActual) => [...filaActual]);
 
-    if (valorNormalizado !== '' && !['A', 'T', 'C', 'G'].includes(valorNormalizado)) {
+    if (valorNormalizado !== '' && !BASES_VALIDAS.includes(valorNormalizado)) {
       this.mensajeError.set('Solo se permiten las letras A, T, C y G.');
       return;
     }
 
+    const nuevaGrilla = this.grillaAdn().map((filaActual) => [...filaActual]);
     nuevaGrilla[fila][columna] = valorNormalizado;
+
     this.grillaAdn.set(nuevaGrilla);
     this.analisis.set(null);
     this.celdasResaltadas.set(new Set());
-
-    if (valorNormalizado === '' && this.mensajeError() === 'Solo se permiten las letras A, T, C y G.') {
-      this.mensajeError.set('');
-      return;
-    }
-
     this.mensajeError.set('');
   }
 
@@ -81,5 +76,4 @@ export class App {
   private crearGrillaDesdeAdn(adn: string[]): string[][] {
     return adn.map((fila) => fila.split(''));
   }
-
 }

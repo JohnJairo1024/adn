@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { MutantAnalysis } from '../models/mutant-analysis';
-import { SequenceDetectorService } from './sequence-detector.service';
+import {MutantAnalysis} from '../models/mutant-analysis';
+import {SequenceDetectorService} from './sequence-detector.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,25 +11,23 @@ export class MutantDetectorService {
 
   constructor(
     private readonly sequenceDetectorService: SequenceDetectorService
-  ) {}
+  ) {
+  }
 
   analizar(adn: string[]): MutantAnalysis {
+    const {COINCIDENCIAS_REQUERIDAS_PARA_SER_MUTANTE} = MutantDetectorService;
+
     const coincidenciasEncontradas = this.sequenceDetectorService.contarSecuenciasRepetidas(
       adn,
-      MutantDetectorService.COINCIDENCIAS_REQUERIDAS_PARA_SER_MUTANTE
+      COINCIDENCIAS_REQUERIDAS_PARA_SER_MUTANTE
     );
 
     return {
       adn,
-      esMutante:
-        coincidenciasEncontradas >=
-        MutantDetectorService.COINCIDENCIAS_REQUERIDAS_PARA_SER_MUTANTE,
+      esMutante: coincidenciasEncontradas === COINCIDENCIAS_REQUERIDAS_PARA_SER_MUTANTE,
       coincidenciasEncontradas,
       tamanoMatriz: adn.length
     };
   }
 
-  esMutante(adn: string[]): boolean {
-    return this.analizar(adn).esMutante;
-  }
 }
