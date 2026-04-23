@@ -2,7 +2,6 @@ import {CommonModule} from '@angular/common';
 import {Component, computed, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 
-import {DnaValidationError} from './mutant/errors/dna-validation.error';
 import {MutantAnalysis} from './mutant/models/mutant-analysis';
 import {MutantDetectorService} from './mutant/services/mutant-detector.service';
 import {SequenceDetectorService} from './mutant/services/sequence-detector.service';
@@ -37,16 +36,12 @@ export class App {
       return;
     }
 
-    try {
-      const adn = this.obtenerAdnDesdeGrilla();
-      const resultado = this.mutantDetectorService.analizar(adn);
-      const posiciones = this.sequenceDetectorService.obtenerPosicionesDeSecuencias(adn);
+    const adn = this.obtenerAdnDesdeGrilla();
+    const resultado = this.mutantDetectorService.analizar(adn);
+    const posiciones = this.sequenceDetectorService.obtenerPosicionesDeSecuencias(adn);
 
-      this.analisis.set(resultado);
-      this.celdasResaltadas.set(new Set(posiciones));
-    } catch (error) {
-      this.mensajeError.set(this.obtenerMensajeError(error));
-    }
+    this.analisis.set(resultado);
+    this.celdasResaltadas.set(new Set(posiciones));
   }
 
   protected actualizarCelda(fila: number, columna: number, valor: string): void {
@@ -73,14 +68,6 @@ export class App {
 
   protected esCeldaResaltada(fila: number, columna: number): boolean {
     return this.celdasResaltadas().has(`${fila}-${columna}`);
-  }
-
-  private obtenerMensajeError(error: unknown): string {
-    if (error instanceof DnaValidationError) {
-      return error.message;
-    }
-
-    return 'Ocurrio un error inesperado al analizar el ADN.';
   }
 
   private obtenerAdnDesdeGrilla(): string[] {
